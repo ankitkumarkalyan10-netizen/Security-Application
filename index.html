@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Application Pentest Toolkit</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛡️ Web Application Pentest Toolkit</h1>
+            <p class="subtitle">Standardized security testing & reporting</p>
+        </header>
+
+        <!-- Target Configuration -->
+        <section class="card" id="config-section">
+            <h2>🎯 Target Configuration</h2>
+            <div class="form-group">
+                <label for="target-url">Target URL:</label>
+                <input type="text" id="target-url" placeholder="https://example.com">
+            </div>
+            <div class="form-group">
+                <label for="scan-type">Scan Type:</label>
+                <select id="scan-type">
+                    <option value="quick">Quick Scan</option>
+                    <option value="standard" selected>Standard Scan</option>
+                    <option value="full">Full Audit</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="startScan()">▶ Start Scan</button>
+        </section>
+
+        <!-- Checklist Section -->
+        <section class="card">
+            <h2>📋 Security Checklist</h2>
+            <div class="checklist-grid">
+                <div class="checklist-category">
+                    <h3>🔐 Authentication</h3>
+                    <ul class="checklist">
+                        <li><label><input type="checkbox" id="auth-1"> Weak password policy</label></li>
+                        <li><label><input type="checkbox" id="auth-2"> No MFA implementation</label></li>
+                        <li><label><input type="checkbox" id="auth-3"> Session fixation</label></li>
+                        <li><label><input type="checkbox" id="auth-4"> Credential stuffing vulnerable</label></li>
+                        <li><label><input type="checkbox" id="auth-5"> OAuth misconfiguration</label></li>
+                    </ul>
+                </div>
+                <div class="checklist-category">
+                    <h3>🔍 Input Validation</h3>
+                    <ul class="checklist">
+                        <li><label><input type="checkbox" id="input-1"> SQL Injection</label></li>
+                        <li><label><input type="checkbox" id="input-2"> XSS (Reflected/Stored/DOM)</label></li>
+                        <li><label><input type="checkbox" id="input-3"> Command Injection</label></li>
+                        <li><label><input type="checkbox" id="input-4"> Path Traversal</label></li>
+                        <li><label><input type="checkbox" id="input-5"> XXE Vulnerability</label></li>
+                    </ul>
+                </div>
+                <div class="checklist-category">
+                    <h3>📊 Session Management</h3>
+                    <ul class="checklist">
+                        <li><label><input type="checkbox" id="session-1"> Predictable session IDs</label></li>
+                        <li><label><input type="checkbox" id="session-2"> Missing session timeout</label></li>
+                        <li><label><input type="checkbox" id="session-3"> Insufficient session invalidation</label></li>
+                        <li><label><input type="checkbox" id="session-4"> Cookie without HttpOnly</label></li>
+                        <li><label><input type="checkbox" id="session-5"> Cookie without Secure flag</label></li>
+                    </ul>
+                </div>
+                <div class="checklist-category">
+                    <h3>📝 HTTP Headers</h3>
+                    <ul class="checklist">
+                        <li><label><input type="checkbox" id="header-1"> Missing CSP</label></li>
+                        <li><label><input type="checkbox" id="header-2"> Missing X-Frame-Options</label></li>
+                        <li><label><input type="checkbox" id="header-3"> Missing X-Content-Type-Options</label></li>
+                        <li><label><input type="checkbox" id="header-4"> Missing HSTS</label></li>
+                        <li><label><input type="checkbox" id="header-5"> Insecure CORS policy</label></li>
+                    </ul>
+                </div>
+                <div class="checklist-category">
+                    <h3>🔌 API Security</h3>
+                    <ul class="checklist">
+                        <li><label><input type="checkbox" id="api-1"> Missing rate limiting</label></li>
+                        <li><label><input type="checkbox" id="api-2"> IDOR vulnerability</label></li>
+                        <li><label><input type="checkbox" id="api-3"> Broken access control</label></li>
+                        <li><label><input type="checkbox" id="api-4"> Sensitive data exposure</label></li>
+                        <li><label><input type="checkbox" id="api-5"> Missing API versioning</label></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Automated Scan Runner -->
+        <section class="card">
+            <h2>⚡ Automated Scan Runner</h2>
+            <div class="scan-tools">
+                <div class="tool-item">
+                    <span class="tool-name">Nmap</span>
+                    <span class="tool-status" id="nmap-status">Ready</span>
+                    <button class="btn btn-small" onclick="runTool('nmap')">Run</button>
+                </div>
+                <div class="tool-item">
+                    <span class="tool-name">Nuclei</span>
+                    <span class="tool-status" id="nuclei-status">Ready</span>
+                    <button class="btn btn-small" onclick="runTool('nuclei')">Run</button>
+                </div>
+                <div class="tool-item">
+                    <span class="tool-name">ZAP Proxy</span>
+                    <span class="tool-status" id="zap-status">Ready</span>
+                    <button class="btn btn-small" onclick="runTool('zap')">Run</button>
+                </div>
+                <div class="tool-item">
+                    <span class="tool-name">Burp Suite</span>
+                    <span class="tool-status" id="burp-status">Ready</span>
+                    <button class="btn btn-small" onclick="runTool('burp')">Run</button>
+                </div>
+            </div>
+            <div class="scan-progress" id="scan-progress" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <p id="progress-text">Initializing scan...</p>
+            </div>
+            <div class="scan-output" id="scan-output"></div>
+        </section>
+
+        <!-- Evidence Capture -->
+        <section class="card">
+            <h2>📸 Evidence Capture</h2>
+            <div class="evidence-form">
+                <div class="form-group">
+                    <label for="evidence-title">Finding Title:</label>
+                    <input type="text" id="evidence-title" placeholder="e.g., SQL Injection in Login Form">
+                </div>
+                <div class="form-group">
+                    <label for="evidence-severity">Severity:</label>
+                    <select id="evidence-severity">
+                        <option value="critical">Critical</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                        <option value="info">Informational</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="evidence-description">Description:</label>
+                    <textarea id="evidence-description" rows="3" placeholder="Detailed description of the finding..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="evidence-payload">Proof of Concept / Payload:</label>
+                    <textarea id="evidence-payload" rows="2" placeholder="URL or payload used..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="evidence-screenshot">Screenshot/Log:</label>
+                    <textarea id="evidence-screenshot" rows="2" placeholder="Paste screenshot path or log excerpt..."></textarea>
+                </div>
+                <button class="btn btn-secondary" onclick="addEvidence()">+ Add Evidence</button>
+            </div>
+            <div class="evidence-list" id="evidence-list"></div>
+        </section>
+
+        <!-- Severity Rubric -->
+        <section class="card">
+            <h2>⚠️ Severity Rubric</h2>
+            <table class="rubric-table">
+                <thead>
+                    <tr>
+                        <th>Level</th>
+                        <th>CVSS</th>
+                        <th>Description</th>
+                        <th>Remediation Timeline</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="severity-critical">
+                        <td><span class="badge badge-critical">Critical</span></td>
+                        <td>9.0 - 10.0</td>
+                        <td>Immediate exploitation, data breach, system compromise</td>
+                        <td>Immediate (24-48 hours)</td>
+                    </tr>
+                    <tr class="severity-high">
+                        <td><span class="badge badge-high">High</span></td>
+                        <td>7.0 - 8.9</td>
+                        <td>Significant impact, easy exploitation, sensitive data risk</td>
+                        <td>Urgent (1 week)</td>
+                    </tr>
+                    <tr class="severity-medium">
+                        <td><span class="badge badge-medium">Medium</span></td>
+                        <td>4.0 - 6.9</td>
+                        <td>Moderate impact, requires specific conditions</td>
+                        <td>Standard (2-4 weeks)</td>
+                    </tr>
+                    <tr class="severity-low">
+                        <td><span class="badge badge-low">Low</span></td>
+                        <td>0.1 - 3.9</td>
+                        <td>Minimal impact, difficult to exploit</td>
+                        <td>Scheduled (1-3 months)</td>
+                    </tr>
+                    <tr class="severity-info">
+                        <td><span class="badge badge-info">Info</span></td>
+                        <td>0.0</td>
+                        <td>Informational findings, best practices</td>
+                        <td>Next cycle</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Remediation Mapping -->
+        <section class="card">
+            <h2>🔧 Remediation Mapping</h2>
+            <div class="remediation-grid">
+                <div class="remediation-item">
+                    <h4>SQL Injection</h4>
+                    <p>Use parameterized queries, input validation, ORM frameworks</p>
+                </div>
+                <div class="remediation-item">
+                    <h4>XSS</h4>
+                    <p>Implement CSP, sanitize inputs, use output encoding</p>
+                </div>
+                <div class="remediation-item">
+                    <h4>CSRF</h4>
+                    <p>Implement anti-CSRF tokens, SameSite cookies</p>
+                </div>
+                <div class="remediation-item">
+                    <h4>IDOR</h4>
+                    <p>Implement proper authorization checks, use indirect references</p>
+                </div>
+                <div class="remediation-item">
+                    <h4>Missing Headers</h4>
+                    <p>Configure web server to send security headers</p>
+                </div>
+                <div class="remediation-item">
+                    <h4>Weak Auth</h4>
+                    <p>Implement MFA, password policies, account lockout</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Report Generation -->
+        <section class="card">
+            <h2>📄 Report Generation</h2>
+            <div class="report-actions">
+                <button class="btn btn-primary" onclick="generateReport('markdown')">Generate Markdown Report</button>
+                <button class="btn btn-secondary" onclick="generateReport('html')">Generate HTML Report</button>
+                <button class="btn btn-secondary" onclick="loadSampleReport(1)">Load Sample Report 1</button>
+                <button class="btn btn-secondary" onclick="loadSampleReport(2)">Load Sample Report 2</button>
+            </div>
+            <div class="report-preview" id="report-preview">
+                <h3>Report Preview</h3>
+                <pre id="report-content">No report generated yet...</pre>
+            </div>
+        </section>
+
+        <!-- CI Integration -->
+        <section class="card">
+            <h2>🔄 CI Scan Integration</h2>
+            <div class="ci-config">
+                <h3>GitHub Actions Workflow</h3>
+                <pre class="code-block">name: Security Scan
+on: [push, pull_request]
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run Nuclei Scan
+        run: |
+          nuclei -u ${{ secrets.TARGET_URL }} \
+            -severity critical,high,medium \
+            -json -output results.json
+      - name: Upload Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: security-results
+          path: results.json</pre>
+                <button class="btn btn-small" onclick="copyCIConfig()">Copy Configuration</button>
+            </div>
+        </section>
+
+        <footer>
+            <p>Web Application Pentest Toolkit v1.0 | Built for security professionals</p>
+        </footer>
+    </div>
+
+    <!-- Load JavaScript modules -->
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/scanner.js"></script>
+    <script src="assets/js/evidence.js"></script>
+    <script src="assets/js/report.js"></script>
+    <script src="assets/js/ui.js"></script>
+</body>
+</html>

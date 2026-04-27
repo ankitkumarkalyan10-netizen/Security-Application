@@ -1,0 +1,239 @@
+// report.js - Report Generation Module
+
+const ReportGenerator = {
+    // Generate report in specified format
+    generate: function(format) {
+        const targetUrl = document.getElementById('target-url').value || 'https://example.com';
+        const date = new Date().toISOString().split('T')[0];
+        
+        // Get checklist status
+        const checklistStatus = this.getChecklistStatus();
+        
+        let report = '';
+        
+        if (format === 'markdown') {
+            report = this.generateMarkdown(targetUrl, date, checklistStatus);
+        } else {
+            report = this.generateHTML(targetUrl, date, checklistStatus);
+        }
+        
+        document.getElementById('report-content').textContent = report;
+        AppState.currentReport = report;
+        
+        return report;
+    },
+    
+    // Get checklist status
+    getChecklistStatus: function() {
+        const checklistStatus = {};
+        document.querySelectorAll('.checklist input[type="checkbox"]').forEach(cb => {
+            checklistStatus[cb.id] = cb.checked;
+        });
+        return checklistStatus;
+    },
+    
+    // Generate Markdown report
+    generateMarkdown: function(target, date, checklist) {
+        const severityCounts = this.getSeverityCounts();
+        
+        return `# Web Application Security Audit Report
+
+## Executive Summary
+- **Target:** ${target}
+- **Date:** ${date}
+- **Severity Summary:** ${severityCounts.critical} Critical, ${severityCounts.high} High, ${severityCounts.medium} Medium, ${severityCounts.low} Low
+
+---
+
+## 1. Security Checklist Results
+
+### Authentication
+${checklist['auth-1'] ? '- [x] Weak password policy' : '- [ ] Weak password policy'}
+${checklist['auth-2'] ? '- [x] No MFA implementation' : '- [ ] No MFA implementation'}
+${checklist['auth-3'] ? '- [x] Session fixation' : '- [ ] Session fixation'}
+${checklist['auth-4'] ? '- [x] Credential stuffing vulnerable' : '- [ ] Credential stuffing vulnerable'}
+${checklist['auth-5'] ? '- [x] OAuth misconfiguration' : '- [ ] OAuth misconfiguration'}
+
+### Input Validation
+${checklist['input-1'] ? '- [x] SQL Injection' : '- [ ] SQL Injection'}
+${checklist['input-2'] ? '- [x] XSS' : '- [ ] XSS'}
+${checklist['input-3'] ? '- [x] Command Injection' : '- [ ] Command Injection'}
+${checklist['input-4'] ? '- [x] Path Traversal' : '- [ ] Path Traversal'}
+${checklist['input-5'] ? '- [x] XXE Vulnerability' : '- [ ] XXE Vulnerability'}
+
+### Session Management
+${checklist['session-1'] ? '- [x] Predictable session IDs' : '- [ ] Predictable session IDs'}
+${checklist['session-2'] ? '- [x] Missing session timeout' : '- [ ] Missing session timeout'}
+${checklist['session-3'] ? '- [x] Insufficient session invalidation' : '- [ ] Insufficient session invalidation'}
+${checklist['session-4'] ? '- [x] Cookie without HttpOnly' : '- [ ] Cookie without HttpOnly'}
+${checklist['session-5'] ? '- [x] Cookie without Secure flag' : '- [ ] Cookie without Secure flag'}
+
+### HTTP Headers
+${checklist['header-1'] ? '- [x] Missing CSP' : '- [ ] Missing CSP'}
+${checklist['header-2'] ? '- [x] Missing X-Frame-Options' : '- [ ] Missing X-Frame-Options'}
+${checklist['header-3'] ? '- [x] Missing X-Content-Type-Options' : '- [ ] Missing X-Content-Type-Options'}
+${checklist['header-4'] ? '- [x] Missing HSTS' : '- [ ] Missing HSTS'}
+${checklist['header-5'] ? '- [x] Insecure CORS policy' : '- [ ] Insecure CORS policy'}
+
+### API Security
+${checklist['api-1'] ? '- [x] Missing rate limiting' : '- [ ] Missing rate limiting'}
+${checklist['api-2'] ? '- [x] IDOR vulnerability' : '- [ ] IDOR vulnerability'}
+${checklist['api-3'] ? '- [x] Broken access control' : '- [ ] Broken access control'}
+${checklist['api-4'] ? '- [x] Sensitive data exposure' : '- [ ] Sensitive data exposure'}
+${checklist['api-5'] ? '- [x] Missing API versioning' : '- [ ] Missing API versioning'}
+
+---
+
+## 2. Findings
+
+${AppState.evidenceList.length === 0 ? '*No findings recorded yet.*' : AppState.evidenceList.map((f, i) => `
+### ${i + 1}. ${f.title}
+- **Severity:** ${f.severity.toUpperCase()}
+- **Description:** ${f.description}
+- **Proof of Concept:** \`${f.payload}\`
+- **Evidence:** ${f.screenshot}
+`).join('\n')}
+
+---
+
+## 3. Remediation Recommendations
+
+| Finding | Remediation |
+|---------|-------------|
+| SQL Injection | Use parameterized queries, input validation |
+| XSS | Implement CSP, sanitize inputs, output encoding |
+| Missing Headers | Configure web server with security headers |
+| IDOR | Implement proper authorization checks |
+| Weak Auth | Implement MFA, password policies |
+
+---
+
+## 4. Conclusion
+
+This security audit was conducted using industry-standard tools and methodologies.
+${severityCounts.critical > 0 ? '⚠️ CRITICAL issues require immediate attention.' : 'No critical issues found.'}
+
+**Next Steps:**
+1. Address critical and high-severity findings within 1 week
+2. Re-test after remediation
+3. Schedule follow-up audit in 3 months
+
+---
+*Report generated by Web Application Pentest Toolkit v1.0*
+`;
+    },
+    
+    // Generate HTML report
+    generateHTML: function(target, date, checklist) {
+        const severityCounts = this.getSeverityCounts();
+        
+        return `<!DOCTYPE html>
+<html>
+<head>
+    <title>Security Audit Report - ${target}</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; }
+        h1 { color: #e94560; border-bottom: 2px solid #e94560; }
+        h2 { color: #16213e; margin-top: 30px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background: #1a1a2e; color: white; }
+        .critical { background: #8b0000; color: white; }
+        .high { background: #ff6b35; color: white; }
+        .medium { background: #f7b731; color: black; }
+        .low { background: #20bf6b; color: white; }
+    </style>
+</head>
+<body>
+    <h1>Web Application Security Audit Report</h1>
+    <p><strong>Target:</strong> ${target}</p>
+    <p><strong>Date:</strong> ${date}</p>
+    
+    <h2>Severity Summary</h2>
+    <table>
+        <tr><th>Critical</th><th>High</th><th>Medium</th><th>Low</th></tr>
+        <tr>
+            <td class="critical">${severityCounts.critical}</td>
+            <td class="high">${severityCounts.high}</td>
+            <td class="medium">${severityCounts.medium}</td>
+            <td class="low">${severityCounts.low}</td>
+        </tr>
+    </table>
+    
+    <h2>Findings</h2>
+    ${AppState.evidenceList.length === 0 ? '<p>No findings recorded yet.</p>' : AppState.evidenceList.map(f => `
+    <div style="margin: 20px 0; padding: 15px; border-left: 4px solid ${f.severity === 'critical' ? '#8b0000' : f.severity === 'high' ? '#ff6b35' : '#f7b731'}; background: #f5f5f5;">
+        <h3>${f.title} <span class="${f.severity}">${f.severity.toUpperCase()}</span></h3>
+        <p>${f.description}</p>
+        <p><strong>Payload:</strong> <code>${f.payload}</code></p>
+    </div>
+    `).join('')}
+    
+    <h2>Remediation</h2>
+    <ul>
+        <li><strong>SQL Injection:</strong> Use parameterized queries</li>
+        <li><strong>XSS:</strong> Implement CSP, sanitize inputs</li>
+        <li><strong>Missing Headers:</strong> Configure security headers</li>
+        <li><strong>IDOR:</strong> Implement authorization checks</li>
+    </ul>
+</body>
+</html>`;
+    },
+    
+    // Get severity counts from evidence
+    getSeverityCounts: function() {
+        const counts = { critical: 0, high: 0, medium: 0, low: 0, info: 0 };
+        AppState.evidenceList.forEach(f => {
+            if (counts[f.severity] !== undefined) {
+                counts[f.severity]++;
+            }
+        });
+        return counts;
+    },
+    
+    // Load sample report
+    loadSample: function(reportNum) {
+        const report = sampleReports[reportNum];
+        if (!report) return;
+        
+        // Set target URL
+        document.getElementById('target-url').value = report.target;
+        
+        // Set checklist
+        Object.keys(report.checklist).forEach(id => {
+            const cb = document.getElementById(id);
+            if (cb) cb.checked = report.checklist[id];
+        });
+        
+        // Load findings as evidence
+        EvidenceManager.loadFromSample(report.findings);
+        
+        // Generate report
+        setTimeout(() => this.generate('markdown'), 100);
+        
+        alert(`Loaded Sample Report ${reportNum}: ${report.target}`);
+    },
+    
+    // Download report as file
+    download: function(format) {
+        const content = format === 'markdown' 
+            ? this.generateMarkdown(document.getElementById('target-url').value || 'target', new Date().toISOString().split('T')[0], this.getChecklistStatus())
+            : this.generateHTML(document.getElementById('target-url').value || 'target', new Date().toISOString().split('T')[0], this.getChecklistStatus());
+        
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `security-audit-${Date.now()}.${format === 'markdown' ? 'md' : 'html'}`;
+        a.click();
+        URL.revokeObjectURL(url);
+    },
+    
+    // Get current report
+    getCurrentReport: function() {
+        return AppState.currentReport;
+    }
+};
+
+// Export to global
+window.ReportGenerator = ReportGenerator;

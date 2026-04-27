@@ -1,0 +1,41 @@
+<!-- Sidebar Component -->
+<aside class="sidebar">
+    <div class="sidebar-section">
+        <h3>Quick Actions</h3>
+        <ul class="sidebar-menu">
+            <li><a href="#" onclick="startScan()">▶ Start Scan</a></li>
+            <li><a href="#" onclick="generateReport('markdown')">📄 Generate Report</a></li>
+            <li><a href="#" onclick="EvidenceManager.clearAll()">🗑️ Clear All</a></li>
+        </ul>
+    </div>
+    <div class="sidebar-section">
+        <h3>Scan Status</h3>
+        <ul class="scan-status-list">
+            <li><span class="status-dot" id="status-nmap"></span> Nmap</li>
+            <li><span class="status-dot" id="status-nuclei"></span> Nuclei</li>
+            <li><span class="status-dot" id="status-zap"></span> ZAP</li>
+            <li><span class="status-dot" id="status-burp"></span> Burp</li>
+        </ul>
+    </div>
+    <div class="sidebar-section">
+        <h3>Statistics</h3>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span class="stat-value" id="stat-critical">0</span>
+                <span class="stat-label">Critical</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="stat-high">0</span>
+                <span class="stat-label">High</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="stat-medium">0</span>
+                <span class="stat-label">Medium</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="stat-low">0</span>
+                <span class="stat-label">Low</span>
+            </div>
+        </div>
+    </div>
+</aside>
