@@ -100,7 +100,8 @@ const Scanner = {
             return;
         }
         
-        alert(`Starting ${scanType} scan on ${targetUrl}\n\nThis will run Nmap, Nuclei, and ZAP scans.`);
+        BackendAPI.saveSession(targetUrl, scanType).catch(() => {});
+        window.refreshDashboardSummary?.();
         
         // Run all tools sequentially
         this.runTool('nmap');

@@ -29,6 +29,11 @@ const EvidenceManager = {
         };
         
         AppState.evidenceList.push(evidence);
+        BackendAPI.saveFinding(evidence).then(() => {
+            window.refreshDashboardSummary?.();
+        }).catch(() => {
+            console.warn('Backend save failed, evidence remains in-memory only');
+        });
         this.renderEvidenceList();
         this.clearForm();
     },

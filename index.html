@@ -10,8 +10,37 @@
     <div class="container">
         <header>
             <h1>🛡️ Web Application Pentest Toolkit</h1>
-            <p class="subtitle">Standardized security testing & reporting</p>
+            <p class="subtitle">A modern, human-friendly security operations workspace for real-time audits and reporting.</p>
         </header>
+
+        <section class="hero-grid">
+            <article class="card hero-card">
+                <p class="eyebrow">Live overview</p>
+                <h2>Human-centered security operations</h2>
+                <p class="muted">Capture findings, simulate scans, and store evidence in a real Python + SQLite backend for a more production-ready workflow.</p>
+                <div class="chip-row">
+                    <span class="chip">Python backend</span>
+                    <span class="chip">SQLite database</span>
+                    <span class="chip">Live reporting</span>
+                </div>
+            </article>
+            <article class="card stat-card">
+                <p class="eyebrow">Backend status</p>
+                <div class="status-pill"><span class="pulse-dot"></span> Online</div>
+                <ul class="mini-list">
+                    <li>Flask API running on port 5000</li>
+                    <li>SQLite persistence for findings and sessions</li>
+                    <li>Fresh live summary from /api/summary</li>
+                </ul>
+            </article>
+        </section>
+
+        <section class="card live-summary-grid">
+            <article class="summary-box"><strong id="summary-findings">0</strong><span>Stored findings</span></article>
+            <article class="summary-box"><strong id="summary-sessions">0</strong><span>Audit sessions</span></article>
+            <article class="summary-box"><strong id="summary-critical">0</strong><span>Critical severity</span></article>
+            <article class="summary-box"><strong id="summary-high">0</strong><span>High severity</span></article>
+        </section>
 
         <!-- Target Configuration -->
         <section class="card" id="config-section">
@@ -282,6 +311,7 @@ jobs:
     </div>
 
     <!-- Load JavaScript modules -->
+    <script src="assets/js/api.js"></script>
     <script src="assets/js/app.js"></script>
     <script src="assets/js/scanner.js"></script>
     <script src="assets/js/evidence.js"></script>

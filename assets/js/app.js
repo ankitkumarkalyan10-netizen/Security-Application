@@ -100,13 +100,27 @@ const sampleReports = {
     }
 };
 
+async function refreshDashboardSummary() {
+    try {
+        const summary = await BackendAPI.getSummary();
+        document.getElementById('summary-findings').textContent = summary.findings || 0;
+        document.getElementById('summary-sessions').textContent = summary.sessions || 0;
+        document.getElementById('summary-critical').textContent = summary.severity?.critical || 0;
+        document.getElementById('summary-high').textContent = summary.severity?.high || 0;
+    } catch (error) {
+        console.warn('Backend summary unavailable:', error);
+    }
+}
+
 // Initialize application
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     console.log('Web Application Pentest Toolkit loaded');
     UI.init();
     EvidenceManager.init();
+    await refreshDashboardSummary();
 });
 
 // Export for global access
 window.AppState = AppState;
 window.sampleReports = sampleReports;
+window.refreshDashboardSummary = refreshDashboardSummary;

@@ -7,6 +7,8 @@ A client-side security assessment dashboard for web application penetration test
 - HTML
 - CSS
 - JavaScript
+- Python / Flask
+- SQLite
 
 ## Features
 
@@ -16,6 +18,8 @@ A client-side security assessment dashboard for web application penetration test
 - Evidence capture form for findings, severity, descriptions, PoC payloads, and logs
 - Severity rubric table with remediation timelines
 - Sample audit reports and report state management via JavaScript
+- Python Flask backend with SQLite persistence for findings and scan sessions
+- Improved human-friendly UI with live summary cards and real-time dashboard feedback
 
 ## Project Structure
 
@@ -26,13 +30,16 @@ A client-side security assessment dashboard for web application penetration test
 
 ## How to Use
 
-1. Open `index.html` in a web browser.
-2. Enter the target URL in the Target Configuration section.
-3. Select a scan type (`Quick Scan`, `Standard Scan`, or `Full Audit`).
-4. Click `Start Scan` to begin a simulated scan workflow.
-5. Review the security checklist items and mark findings as needed.
-6. Use the Evidence Capture section to log findings, severity, descriptions, and proof of concept details.
-7. Consult the Severity Rubric and Remediation Mapping sections for fix guidance.
+1. Install the Python package dependencies:
+   `pip install -r requirements.txt`
+2. Start the backend:
+   `python app.py`
+3. Open `index.html` in a browser (or use a simple static server if preferred).
+4. Enter the target URL in the Target Configuration section.
+5. Select a scan type (`Quick Scan`, `Standard Scan`, or `Full Audit`).
+6. Click `Start Scan` to begin the workflow and store the session in SQLite.
+7. Use the Evidence Capture section to log findings, severity, descriptions, and proof of concept details.
+8. Consult the Severity Rubric and Remediation Mapping sections for fix guidance.
 
 ## Notes
 
